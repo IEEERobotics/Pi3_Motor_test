@@ -14,17 +14,24 @@ I2CObject::~I2CObject (void)
 
 void I2CObject::test(void)
 {
-    unsigned char array[50] = "hello from the beaglebone";
-    unsigned int size = 50;
-    unsigned char cmd = 0xaa;
+    signed char array[50] = "hello from the beaglebone",i;
+    unsigned int size = 4;
+    char cmd = 0xaa;
     //size = sprintf((char*)array,"Hi from the beaglebone\n");
-    RegWrite(cmd,size,array);
-    RegRead(cmd,50,array);
+    
+    for(i =0;i<4;i++)
+    {
+	array[i] = 100;
+    }	
+   RegWrite(cmd,size,array);
+   printf("Set motors to %d\n",array[0]); 	    
+
+//RegRead(cmd,50,array);
 
 
 }
 
-void I2CObject::RegWrite(unsigned char cmd, unsigned int size,unsigned char *array)
+void I2CObject::RegWrite(char cmd, unsigned int size,signed char *array) 
 {
 #if 0
     char buf[size + 1];
@@ -57,7 +64,7 @@ void I2CObject::RegWrite(unsigned char cmd, unsigned int size,unsigned char *arr
     messages[0].addr  = addr;
     messages[0].flags = 0;
     messages[0].len   = size+1;
-    messages[0].buf   = buf;
+    messages[0].buf   =  (char*) buf;
 
     /* The first byte indicates which register we'll write */
 
@@ -78,7 +85,7 @@ void I2CObject::RegWrite(unsigned char cmd, unsigned int size,unsigned char *arr
 #endif
 }
 
-void I2CObject::RegRead(unsigned char cmd, unsigned int size, unsigned char *array)
+void I2CObject::RegRead(char cmd, unsigned int size, char *array)
 {
 #if 0
     struct i2c_rdwr_ioctl_data msgs;
@@ -117,13 +124,13 @@ void I2CObject::RegRead(unsigned char cmd, unsigned int size, unsigned char *arr
     messages[0].addr  = addr;
     messages[0].flags = 0;
     messages[0].len   = 1;
-    messages[0].buf   = &cmd;
+    messages[0].buf   = (char*) &cmd;
 
     /* The data will get returned in this structure */
     messages[1].addr  = addr;
     messages[1].flags = I2C_M_RD/* | I2C_M_NOSTART*/;
     messages[1].len   = size;
-    messages[1].buf   = array;
+    messages[1].buf   = (char*) array;
 
     /* Send the request to the kernel and get the result back */
     packets.msgs      = messages;
