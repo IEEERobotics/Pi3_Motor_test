@@ -64,7 +64,7 @@ void I2CObject::RegWrite(char cmd, unsigned int size,signed char *array)
     messages[0].addr  = addr;
     messages[0].flags = 0;
     messages[0].len   = size+1;
-    messages[0].buf   =  (char*) buf;
+    messages[0].buf   =  (__u8*) buf;
 
     /* The first byte indicates which register we'll write */
 
@@ -124,13 +124,13 @@ void I2CObject::RegRead(char cmd, unsigned int size, char *array)
     messages[0].addr  = addr;
     messages[0].flags = 0;
     messages[0].len   = 1;
-    messages[0].buf   = (char*) &cmd;
+    messages[0].buf   = (__u8*) &cmd;
 
     /* The data will get returned in this structure */
     messages[1].addr  = addr;
     messages[1].flags = I2C_M_RD/* | I2C_M_NOSTART*/;
     messages[1].len   = size;
-    messages[1].buf   = (char*) array;
+    messages[1].buf   = (__u8*) array;
 
     /* Send the request to the kernel and get the result back */
     packets.msgs      = messages;
